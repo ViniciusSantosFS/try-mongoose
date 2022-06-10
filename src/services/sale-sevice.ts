@@ -1,4 +1,4 @@
-import { SaleModel } from '../Models/Sale'
+import { SaleModel } from '../models/Sale'
 
 interface CreateParams {
   buyerName: string
