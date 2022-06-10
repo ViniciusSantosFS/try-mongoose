@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import './configs/database'
+import './providers/mongo-provider'
 
 import { app } from './app'
 
