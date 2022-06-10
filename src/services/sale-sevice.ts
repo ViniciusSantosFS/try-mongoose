@@ -37,7 +37,6 @@ class SaleService {
     }
 
     if (!SaleModel) return false
-
     const newSale = new SaleModel({ sale })
 
     try {
