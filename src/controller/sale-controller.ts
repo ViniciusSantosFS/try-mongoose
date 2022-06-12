@@ -1,9 +1,9 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { saleService } from '../services/sale-sevice'
 import { Yup } from '../providers/yup-provider'
 
 class SaleController {
-  async create(req: Request, res: Response) {
+  async store(req: Request, res: Response, next: NextFunction) {
     try {
       await Yup.saleSchema.validate(req.body, { abortEarly: true })
     } catch (error) {
@@ -11,12 +11,48 @@ class SaleController {
       return res.status(400).send({ message: message })
     }
 
-    const success = await saleService.create(req.body)
-
-    if (!success) {
-      return res.status(500).json({ message: 'Something went wrong at register trade' })
+    try {
+      await saleService.create(req.body)
+      return res.sendStatus(201)
+    } catch (error) {
+      next(error)
     }
-    return res.sendStatus(201)
+  }
+
+  async index(req: Request, res: Response, next: NextFunction) {
+    try {
+      const sales = (await saleService.list()) ?? []
+      return res.status(200).json(sales)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      Yup.saleSchema.validate(req.body, { abortEarly: true })
+    } catch (error) {
+      return res.status(400).json({ message: error })
+    }
+    const { id } = req.params
+
+    try {
+      const sale = await saleService.update(id, req.body)
+      if (!sale) return res.status(400).json({ message: 'sale is not register in database' })
+      return res.status(200).json(sale)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async destroy(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params
+    try {
+      await saleService.delete(id)
+      return res.sendStatus(200)
+    } catch (error) {
+      next(error)
+    }
   }
 }
 
