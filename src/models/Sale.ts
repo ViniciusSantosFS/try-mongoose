@@ -21,6 +21,7 @@ interface IBuyer {
 }
 
 export interface ISale {
+  _id: string
   sale: {
     buyer: IBuyer
     item: Item
