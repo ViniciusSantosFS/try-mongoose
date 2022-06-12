@@ -1,6 +1,7 @@
-import { SaleModel } from '../models/Sale'
+import { ISale, SaleModel } from '../models/Sale'
+import { SaleDto } from '../dtos/sale-dto'
 
-interface CreateParams {
+interface ControllerSaleBody {
   buyerName: string
   buyerCpf: string
   product: string
@@ -11,10 +12,37 @@ interface CreateParams {
 }
 
 class SaleService {
-  async create(data: CreateParams) {
-    const { buyerName, buyerCpf, product, price, amount, sellerName, sellerCpf } = data
+  async create(sale: ControllerSaleBody) {
+    const formattedSale = this.toModel(sale)
+    const newSale = new SaleModel(formattedSale)
+    await newSale.save()
+    return true
+  }
 
-    const sale = {
+  async list() {
+    const sales = await SaleModel.find({})
+    if (!sales) return null
+    const salesDto = sales.map((sale) => new SaleDto(sale))
+    return salesDto
+  }
+
+  async update(id: string, sale: ControllerSaleBody) {
+    const formattedSale = this.toModel(sale)
+    const updatedSale = await SaleModel.findOneAndUpdate({ _id: id }, formattedSale, {
+      new: true,
+    })
+
+    if (!updatedSale) return null
+    return new SaleDto(updatedSale)
+  }
+
+  async delete(id: string) {
+    await SaleModel.deleteOne({ _id: id })
+  }
+
+  private toModel(sale: ControllerSaleBody) {
+    const { buyerName, buyerCpf, product, price, amount, sellerName, sellerCpf } = sale
+    const formmatedSale = {
       buyer: {
         name: buyerName,
         cpf: buyerCpf ?? null,
@@ -35,17 +63,7 @@ class SaleService {
 
       createdAt: new Date(),
     }
-
-    if (!SaleModel) return false
-    const newSale = new SaleModel({ sale })
-
-    try {
-      await newSale.save()
-    } catch (error) {
-      return false
-    }
-
-    return true
+    return { sale: formmatedSale }
   }
 }
 
