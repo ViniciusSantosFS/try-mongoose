@@ -19,7 +19,7 @@ describe('Postgres Strategy', function () {
   this.timeout(Infinity)
 
   this.beforeAll(async () => {
-    await contextStrategy.connect()
+    // await contextStrategy.connect()
     await contextStrategy.delete(undefined)
     await contextStrategy.create(MOCK_HEROI_UPDATE)
   })

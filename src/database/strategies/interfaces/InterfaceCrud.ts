@@ -11,12 +11,11 @@ export interface Hero {
   poder: string
 }
 
-interface ICrud {
-  create(item: Hero): Promise<Hero>
-  read(item: { [key: string]: string }, skip?: number, limit?: number): Promise<Hero[]>
-  update(id: number | string, item: Hero): Promise<number[]>
+interface ICrud<T> {
+  create(item: T): Promise<T>
+  read(item: { [key: string]: string }, skip?: number, limit?: number): Promise<T[]>
+  update(id: number | string, item: T): Promise<number[]>
   delete(id?: number | string): Promise<number>
-  connect(): Promise<void>
   isConnected(): Promise<boolean>
 }
 

@@ -2,7 +2,7 @@ import { Hero, ICrud } from './interfaces/InterfaceCrud'
 import { DataTypes, Model, ModelCtor, Sequelize } from 'sequelize'
 import { Sequelize as SequelizeType } from 'sequelize/types'
 
-class Postgres implements ICrud {
+class Postgres implements ICrud<any> {
   private driver!: SequelizeType
   private herois!: ModelCtor<Model<Hero, Hero>>
 

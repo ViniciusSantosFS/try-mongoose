@@ -1,13 +1,13 @@
-import { Hero, ICrud } from '../interfaces/InterfaceCrud'
+import { ICrud } from '../interfaces/InterfaceCrud'
 
-class ContextStrategy {
+class ContextStrategy<T> {
   private database
 
-  constructor(strategy: ICrud) {
+  constructor(strategy: ICrud<T>) {
     this.database = strategy
   }
 
-  create(item: Hero) {
+  create(item: T) {
     return this.database.create(item)
   }
 
@@ -15,16 +15,12 @@ class ContextStrategy {
     return this.database.read(item, skip, limit)
   }
 
-  update(id: number | string, item: Hero) {
+  update(id: number | string, item: T) {
     return this.database.update(id, item)
   }
 
   delete(id?: number | string) {
     return this.database.delete(id)
-  }
-
-  connect() {
-    return this.database.connect()
   }
 
   isConnected() {

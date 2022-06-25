@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import assert from 'assert'
-import { MongoDB } from '../database/strategies/mongodb'
+import { MongoDB } from '../database/strategies/mongodb/mongodb'
 import { ContextStrategy } from '../database/strategies/base/contextStrategy'
+import heroesSchema from '../database/strategies/mongodb/schemas/heroesSchema'
 import mongoose from 'mongoose'
-
-const contextStrategy = new ContextStrategy(new MongoDB())
+import { Hero, ICrud } from '../database/strategies/interfaces/InterfaceCrud'
 
 const MOCK_CREATE_HERO = {
   nome: 'Mulher Maravilha',
@@ -22,12 +22,14 @@ const MOCK_HERO_TO_UPDATE = {
 }
 
 let MOCK_HERO_ID: string | undefined
+let contextStrategy: ICrud<Hero> | undefined
 
-describe('MongoDb Suit tests', function () {
+describe.only('MongoDb Suit tests', function () {
   this.timeout(Infinity)
 
   this.beforeAll(async () => {
-    await contextStrategy.connect()
+    const connection = await MongoDB.connect()
+    contextStrategy = new ContextStrategy(new MongoDB(connection, heroesSchema))
     await contextStrategy.create(MOCK_DEFAULT_HERO)
     const hero = await contextStrategy.create(MOCK_HERO_TO_UPDATE)
     MOCK_HERO_ID = hero._id
@@ -38,23 +40,23 @@ describe('MongoDb Suit tests', function () {
   })
 
   it('Should verify connection', async () => {
-    const result = await contextStrategy.isConnected()
+    const result = await contextStrategy?.isConnected()
 
     assert.deepStrictEqual(result, true)
   })
 
   it('Should create a hero', async () => {
-    const { nome, poder } = await contextStrategy.create(MOCK_CREATE_HERO)
+    const { nome, poder } = await contextStrategy!.create(MOCK_CREATE_HERO)
     assert.deepStrictEqual({ nome, poder }, MOCK_CREATE_HERO)
   })
 
   it('Should list heroes', async () => {
-    const [{ nome, poder }] = await contextStrategy.read({ nome: MOCK_DEFAULT_HERO.nome })
+    const [{ nome, poder }] = await contextStrategy!.read({ nome: MOCK_DEFAULT_HERO.nome })
     assert.deepStrictEqual({ nome, poder }, MOCK_DEFAULT_HERO)
   })
 
   it('Should update a hero', async () => {
-    const [result] = await contextStrategy.update(MOCK_HERO_ID!, {
+    const [result] = await contextStrategy!.update(MOCK_HERO_ID!, {
       ...MOCK_HERO_TO_UPDATE,
       nome: 'Pernalonga',
     })
@@ -62,7 +64,7 @@ describe('MongoDb Suit tests', function () {
   })
 
   it('Should remove a hero', async () => {
-    const result = await contextStrategy.delete(MOCK_HERO_ID)
+    const result = await contextStrategy!.delete(MOCK_HERO_ID)
     assert.deepStrictEqual(result, 1)
   })
 })
