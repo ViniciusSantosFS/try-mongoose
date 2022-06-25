@@ -15,34 +15,34 @@ const MOCK_HEROI_UPDATE = {
   poder: 'Dinheiro',
 }
 
-describe('Postgres Strategy', function (this: Mocha.Context) {
+describe('Postgres Strategy', function () {
   this.timeout(Infinity)
 
-  this.beforeAll(async function () {
+  this.beforeAll(async () => {
     await contextStrategy.connect()
     await contextStrategy.delete(undefined)
     await contextStrategy.create(MOCK_HEROI_UPDATE)
   })
 
-  it('Should connect with PostgresSQL', async function () {
+  it('Should connect with PostgresSQL', async () => {
     const result = await contextStrategy.isConnected()
     assert.equal(result, true)
   })
 
-  it('Should create a hero', async function () {
+  it('Should create a hero', async () => {
     const result = await contextStrategy.create(MOCK_HEROI)
     delete result.id
 
     assert.deepEqual(result, MOCK_HEROI)
   })
 
-  it('Should list heroes', async function () {
+  it('Should list heroes', async () => {
     const [result] = await contextStrategy.read({ nome: MOCK_HEROI.nome })
     delete result.id
     assert.deepEqual(result, MOCK_HEROI)
   })
 
-  it('Should update a hero', async function () {
+  it('Should update a hero', async () => {
     const [heroToUpdate] = await contextStrategy.read({ nome: MOCK_HEROI_UPDATE.nome })
 
     const newMockHero = {
@@ -57,7 +57,7 @@ describe('Postgres Strategy', function (this: Mocha.Context) {
     assert.deepEqual(updatedHero.nome, newMockHero.nome)
   })
 
-  it('Should remove a hero', async function () {
+  it('Should remove a hero', async () => {
     const [hero] = await contextStrategy.read({})
     const result = await contextStrategy.delete(hero.id)
 
