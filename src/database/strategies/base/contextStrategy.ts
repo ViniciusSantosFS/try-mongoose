@@ -11,15 +11,15 @@ class ContextStrategy {
     return this.database.create(item)
   }
 
-  read(item: { [key: string]: string }) {
-    return this.database.read(item)
+  read(item: { [key: string]: string }, skip?: number, limit?: number) {
+    return this.database.read(item, skip, limit)
   }
 
-  update(id: number, item: Hero) {
+  update(id: number | string, item: Hero) {
     return this.database.update(id, item)
   }
 
-  delete(id: number | undefined) {
+  delete(id?: number | string) {
     return this.database.delete(id)
   }
 
