@@ -24,7 +24,7 @@ const MOCK_HERO_TO_UPDATE = {
 let MOCK_HERO_ID: string | undefined
 let contextStrategy: ICrud<Hero> | undefined
 
-describe.only('MongoDb Suit tests', function () {
+describe('MongoDb Suit tests', function () {
   this.timeout(Infinity)
 
   this.beforeAll(async () => {
